@@ -1,2 +1,2 @@
-# ksummaries
+# KSummaries
 Library of mergeable summaries
