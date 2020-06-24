@@ -28,7 +28,7 @@ class FrequentItems<T>(val maxSize: Int) {
     }
 
     fun merge(summary: FrequentItems<T>) {
-        assert(maxSize == summary.maxSize) { "Unable to apply merge, the sizes are not equal $maxSize ${summary.maxSize}" }
+        assert(maxSize == summary.maxSize) { "Unable to apply merge, the sizes are not equal $maxSize != ${summary.maxSize}" }
         summary.frequentItems().forEach { update(it.key, it.value) }
     }
 }
