@@ -1,7 +1,5 @@
 package spacesaving
 
-import misc.Counter
-
 class SpaceSaving<T> (val maxSize: Int) {
     private var counters = DoubleArray(maxSize)
     private val keys = mutableListOf<T>()
