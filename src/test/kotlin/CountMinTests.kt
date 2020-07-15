@@ -13,5 +13,6 @@ class CountMinTests {
             sketch.update(nextInt(), weight)
         }
         sketch.query(nextInt())
+        sketch.query(nextInt())
     }
 }
