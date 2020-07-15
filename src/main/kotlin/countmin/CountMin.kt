@@ -1,30 +1,27 @@
 package countmin
 
+import misc.Counter
 import java.security.MessageDigest
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.random.Random.Default.nextInt
 
-class CountMin<T> (numRow: Int, numCol: Int) {
-    private var counts = Array(numRow, {i -> Array(t, {j -> 0})})
+class CountMin<T> (val d: Int, val t: Int) {
+    private var counters = MutableList<MutableList<Double>>()
     private var arrA = intArrayOf()
     private var arrB = intArrayOf()
     private val p = 7368787
     private val hashes = mutableListOf<MessageDigest>()
-    private var d = 0
-    private var t = 0
 
     init {
         // Get size
-        d = numRow
-        t = numCol
-        /*
-        counts = Array(d)
         for (i in 0 until d) {
-            val arr = IntArray(t)
-            counts[i] = arr
+            var list = MutableList<Double>()
+            for (j in 0 until t) {
+                list.add(0.0)
+            }
+            counters.add(list)
         }
-         */
 
         // Initialize hash functions
         for (i in 0 until d) {
@@ -46,21 +43,28 @@ class CountMin<T> (numRow: Int, numCol: Int) {
         val hash = getHash(hashcode)
         for (i in 0 until d) {
             val index = getIndex(hash, i)
-            // counts[i][index] += weight
+             counters[i][index] += weight
         }
     }
 
     fun query (key: T) {
-        var res = (10.0).pow(10).toInt()
+        var res = (10.0).pow(10)
         val hashcode = key.hashCode().toString().toByteArray()
         val hash = getHash(hashcode)
         for (i in 0 until d) {
             val index = getIndex(hash, i)
-            // res = min(res, counts[i, index])
+             res = min(res, counters[i][index])
         }
     }
 
     fun merge (summary: CountMin<T>) {
+        assert(d == summary.d) { "Unable to apply merge, the size of rows is not equal $d != ${summary.d}" }
+        assert(t == summary.t) { "Unable to apply merge, the size of cols is not equal $t != ${summary.t}" }
+        for (i in 0 until d) {
+            for (j in 0 until t) {
+                counters[i][j] = min(counters[i][j], summary.counters[i][j])
+            }
+        }
     }
 
     private fun getIndex(hash: Int, index: Int) : Int {
