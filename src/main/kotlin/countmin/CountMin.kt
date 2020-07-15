@@ -12,16 +12,10 @@ class CountMin<T> (val d: Int, val t: Int) {
     private var arrA = Array(d, {0})
     private var arrB = Array(d, {0})
     private val p = 7368787
-    private val hashes = mutableListOf<MessageDigest>()
+    private val md = MessageDigest.getInstance("SHA-256")
 
     init {
         // Initialize hash functions
-        for (i in 0 until d) {
-            var hash = MessageDigest.getInstance("SHA-256")
-            hashes.add(hash)
-        }
-
-        // Initialize array
         for (i in 0 until d) {
             arrA[i] = nextInt(p)
             arrB[i] = nextInt(p)
@@ -29,10 +23,8 @@ class CountMin<T> (val d: Int, val t: Int) {
     }
 
     fun update (key: T, weight: Double) {
-        val hashcode = key.hashCode().toString().toByteArray()
+        val hash = getHash(key)
         for (i in 0 until d) {
-            val bytes = hashes[i].digest(hashcode)
-            val hash = getHash(bytes)
             val index = getIndex(hash, i)
             counters[i][index] += weight
         }
@@ -40,10 +32,8 @@ class CountMin<T> (val d: Int, val t: Int) {
 
     fun query (key: T): Double {
         var res = (10.0).pow(10)
-        val hashcode = key.hashCode().toString().toByteArray()
+        val hash = getHash(key)
         for (i in 0 until d) {
-            val bytes = hashes[i].digest(hashcode)
-            val hash = getHash(bytes)
             val index = getIndex(hash, i)
              res = min(res, counters[i][index])
         }
@@ -53,6 +43,11 @@ class CountMin<T> (val d: Int, val t: Int) {
     fun merge (summary: CountMin<T>) {
         assert(d == summary.d) { "Unable to apply merge, the size of rows is not equal $d != ${summary.d}" }
         assert(t == summary.t) { "Unable to apply merge, the size of cols is not equal $t != ${summary.t}" }
+        for (i in 0 until d) {
+            assert(arrA[i] == summary.arrA[i]) {  "Unable to apply merge, different randomness applied!" }
+            assert(arrB[i] == summary.arrB[i]) {  "Unable to apply merge, different randomness applied!" }
+        }
+
         for (i in 0 until d) {
             for (j in 0 until t) {
                 counters[i][j] = min(counters[i][j], summary.counters[i][j])
@@ -64,7 +59,8 @@ class CountMin<T> (val d: Int, val t: Int) {
         return (arrA[index] * hash + arrB[index]).rem(p).rem(t).absoluteValue
     }
 
-    private fun getHash(bytes: ByteArray) : Int {
+    private fun getHash(key: T) : Int {
+        val bytes = md.digest(key.hashCode().toString().toByteArray())
         var result = 0
         var shift = 0
         for (i in 0 until 8) {
