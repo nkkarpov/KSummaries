@@ -38,14 +38,16 @@ class CountMin<T> (val d: Int, val t: Int) {
         }
     }
 
-    fun query (key: T) {
+    fun query (key: T): Double {
         var res = (10.0).pow(10)
         val hashcode = key.hashCode().toString().toByteArray()
-        val hash = getHash(hashcode)
         for (i in 0 until d) {
+            val bytes = hashes[i].digest(hashcode)
+            val hash = getHash(bytes)
             val index = getIndex(hash, i)
              res = min(res, counters[i][index])
         }
+        return res
     }
 
     fun merge (summary: CountMin<T>) {
