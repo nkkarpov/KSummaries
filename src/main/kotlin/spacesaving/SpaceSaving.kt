@@ -35,6 +35,15 @@ class SpaceSaving<T> (val maxSize: Int) {
         purge(key, weight)
     }
 
+    fun query(key: T): Double {
+        for (i in 0 until maxSize) {
+            if (key == keys[i]) {
+                return counters[i]
+            }
+        }
+        return 0.0
+    }
+
     private fun purge(key: T, weight: Double) {
         var minimum = counters[0]
         var index = 0
