@@ -3,6 +3,7 @@ package frequencies.tests
 import fingerprints.FingerPrints
 import org.junit.Test
 import kotlin.random.Random.Default.nextInt
+import kotlin.test.assertFails
 
 class FingerPrintsTests {
     @Test
@@ -23,5 +24,18 @@ class FingerPrintsTests {
         println(sketchA.query(sketchC))
         sketchA.merge(sketchC)
         println(sketchA.query(sketchC))
+    }
+
+    @Test
+    fun testMerge() {
+        val a = FingerPrints<Int>()
+        val b = FingerPrints<Int>()
+        val weight = 1.0
+        for (i in 0 until 10000) {
+            val item = nextInt()
+            a.update(item, weight)
+            b.update(item, weight)
+        }
+        assertFails("Invalid merge") { a.merge(b) }
     }
 }

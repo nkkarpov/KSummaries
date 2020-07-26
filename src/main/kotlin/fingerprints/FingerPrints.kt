@@ -27,6 +27,8 @@ class FingerPrints<T> {
     }
 
     fun merge (summary: FingerPrints<T>) {
+        assert(p == summary.p) { "Unable to apply merge, the range sizes are not equal $p != ${summary.p}" }
+
         // merge both summaries
         val newPrint = (fingerPrint + summary.fingerPrint).rem(p)
         fingerPrint = newPrint
