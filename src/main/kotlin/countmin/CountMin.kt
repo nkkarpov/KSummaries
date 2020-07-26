@@ -67,6 +67,6 @@ class CountMin<T> (val d: Int, val t: Int) {
             result = result or (bytes.get(i).toInt() shl shift)
             shift += 8
         }
-        return result
+        return result.absoluteValue.rem(p)
     }
 }
