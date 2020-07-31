@@ -2,19 +2,31 @@ package countsketch
 
 import java.security.MessageDigest
 import kotlin.math.absoluteValue
-import kotlin.math.min
 import kotlin.random.Random
 
-class CountSketch<T> (val d: Int, val t: Int) {
-    private var counters = Array(d, { Array(t, {0.0})})
-    private var arrA = Array(d, {0})
-    private var arrB = Array(d, {0})
-    private var arrC = Array(d, {0})
-    private var arrD = Array(d, {0})
+open class CountSketch<T> {
+    var counters: Array<Array<Double>>
+    private var arrA: Array<Int>
+    private var arrB: Array<Int>
+    private var arrC: Array<Int>
+    private var arrD: Array<Int>
+    // array sizes
+    var d: Int
+    var t: Int
+
     private val p = 7368787
     private val md = MessageDigest.getInstance("SHA-256")
 
-    init {
+    constructor(d: Int, t: Int) {
+        counters = Array(d, { Array(t, {0.0})})
+        arrA = Array(d, {0})
+        arrB = Array(d, {0})
+        arrC = Array(d, {0})
+        arrD = Array(d, {0})
+
+        this.d = d
+        this.t = t
+
         // Initialize hash functions
         for (i in 0 until d) {
             arrA[i] = Random.nextInt(p)
@@ -33,7 +45,7 @@ class CountSketch<T> (val d: Int, val t: Int) {
         }
     }
 
-    fun query (key: T): Double {
+    open fun query (key: T): Double {
         var res = DoubleArray(d, {0.0})
         val hash = getHash(key)
         for (i in 0 until d) {
@@ -62,19 +74,20 @@ class CountSketch<T> (val d: Int, val t: Int) {
     }
 
     // Obtain the col index for a given row
-    private fun getIndex(hash: Int, index: Int) : Int {
-        val sign = (arrA[index] * hash + arrB[index]).rem(p).rem(t)
+    fun getIndex(hash: Int, index: Int) : Int {
+        val index = (arrA[index] * hash + arrB[index]).absoluteValue.rem(p).rem(t)
+        return index
+    }
+
+    // Obtain the sign
+    fun getSign(hash: Int, index: Int) : Int {
+        val sign =  2*((arrC[index] * hash + arrD[index]).absoluteValue.rem(p).rem(2))-1
         assert(sign == -1 || sign == 1) { "hash implementation error! "}
         return sign
     }
 
-    // Obtain the sign
-    private fun getSign(hash: Int, index: Int) : Int {
-        return 2*((arrC[index] * hash + arrD[index]).rem(p).rem(2))-1
-    }
-
     // Item to int hash value
-    private fun getHash(key: T) : Int {
+    fun getHash(key: T) : Int {
         val bytes = md.digest(key.hashCode().toString().toByteArray())
         var result = 0
         var shift = 0

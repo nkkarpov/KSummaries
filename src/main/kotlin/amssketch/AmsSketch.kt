@@ -1,16 +1,20 @@
 package misc.amssketch
 
-class AmsSketch<T> (val d: Int, val t: Int)  {
+import countsketch.CountSketch
+import kotlin.math.pow
 
-    fun update (key: T, weight: Double) {
-        return
+class AmsSketch<T> : CountSketch<T> {
+    constructor(d: Int, t: Int): super(d, t)
+
+    override fun query(key: T): Double {
+        val res = DoubleArray(d, {0.0})
+        for (i in 0 until d) {
+            for (j in 0 until t) {
+                res[i] += counters[i][j].pow(2)
+            }
+        }
+        res.sort()
+        return res[d/2]
     }
 
-    fun query(key: T): Double {
-        return 0.0
-    }
-
-    fun merge (summary: AmsSketch<T>) {
-        return
-    }
 }
