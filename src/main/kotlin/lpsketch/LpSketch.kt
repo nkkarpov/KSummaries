@@ -7,6 +7,8 @@ class LpSketch<T> {
     var r = Random()
     var k: Int
     var p: Int
+    val big = r.nextInt()*7368787
+    var numUpdate = 0
 
     constructor(p: Int, k: Int) {
         assert(p == 2) { "Currently do not support l_$p sampling" }
@@ -25,6 +27,7 @@ class LpSketch<T> {
         for (i in 0 until k) {
             counters[i] += weight * p_stable(p) * key
         }
+        numUpdate += 1
     }
 
     fun p_stable(p: Int): Double {
@@ -33,4 +36,23 @@ class LpSketch<T> {
         }
         return 0.0
     }
+
+    fun query(): Double {
+        val res = Array<Double>(k, {0.0})
+        for (i in 0 until k) {
+            res[i] = counters[i]
+        }
+        res.sort()
+        return res[k/2]
+    }
+
+    fun merge(summary: LpSketch<T>) {
+        assert(big == summary.big && k == summary.k && p == summary.p)
+        { "Unable to apply merge, the randomness does not match" }
+
+        for (i in 0 until k) {
+            counters[i] += summary.counters[i]
+        }
+    }
+
 }
