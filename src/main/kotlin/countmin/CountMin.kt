@@ -50,7 +50,7 @@ class CountMin<T> (val d: Int, val t: Int) {
 
         for (i in 0 until d) {
             for (j in 0 until t) {
-                counters[i][j] = min(counters[i][j], summary.counters[i][j])
+                counters[i][j] = counters[i][j] + summary.counters[i][j]
             }
         }
     }
