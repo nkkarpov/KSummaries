@@ -1,4 +1,4 @@
-package misc.l0sampling
+package l0sampling
 
 class L0Sampling<T> {
 
