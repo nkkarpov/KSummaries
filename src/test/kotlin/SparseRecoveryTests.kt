@@ -8,7 +8,7 @@ class SparseRecoveryTests {
     @Test
     fun testInit() {
         val weight = 0.1
-        val sketch = SparseRecovery<Int>(100)
+        val sketch = SparseRecovery<Int>(100, 5, 20, 3)
         for (i in 0 until 10000) {
             sketch.update(Random.nextInt(), weight)
         }
