@@ -3,6 +3,7 @@ package bloom
 import java.security.MessageDigest
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.random.Random
 
 class BloomFilter<T> (val maxSize: Int, val k: Int) {
     private val counters = mutableListOf<Int>()
@@ -50,6 +51,14 @@ class BloomFilter<T> (val maxSize: Int, val k: Int) {
     fun merge(summary: BloomFilter<T>) {
         assert(maxSize == summary.maxSize) { "Unable to apply merge, the sizes are not equal $maxSize != ${summary.maxSize}" }
         assert(k == summary.k) { "Unable to apply merge, the number of hash functions are not equal $k != ${summary.k}" }
+
+        for (i in 0 until k) {
+            for (j in 0 until 10) {
+                assert(hashes[i].digest(Random.nextInt().toString().toByteArray())
+            == summary.hashes[i].digest(Random.nextInt().toString().toByteArray()))
+                { "Unable to apply merge, the randomness used are different" }
+            }
+        }
 
         // loop list and pick bigger
         summary.counters.forEachIndexed { index, element ->
