@@ -8,7 +8,7 @@ import kotlin.test.assertFails
 class SparseRecoveryTests {
     @Test
     fun testInit() {
-        val weight = 0.1
+        val weight = 1
         val sketch = SparseRecovery<Int>(100, 5, 20, 3)
         for (i in 0 until 10000) {
             sketch.update(Random.nextInt(), weight)
@@ -19,7 +19,7 @@ class SparseRecoveryTests {
 
     @Test
     fun testMergeFail() {
-        val weight = 0.5
+        val weight = 1
         val a = SparseRecovery<Int>(100, 5, 20, 3)
         val b = SparseRecovery<Int>(100, 5)
         for (i in 0 until 10000) {
