@@ -2,6 +2,7 @@ package sparserecovery
 
 import bloom.BloomFilter
 import java.security.MessageDigest
+import kotlin.random.Random
 
 class Cell {
     var count = 0
@@ -62,6 +63,14 @@ class SparseRecovery<T> {
         assert(l == summary.l) { "Unable to apply merge, the number of hash functions are not equal $l != ${summary.l}" }
         assert(maxSize == summary.maxSize) { "Unable to apply merge, the sizes are not equal $maxSize != ${summary.maxSize}" }
         assert(k == summary.k) { "Unable to apply merge, the number of hash functions are not equal $k != ${summary.k}" }
+
+        for (i in 0 until l) {
+            for (j in 0 until 10) {
+                val item = Random.nextInt().toString().toByteArray()
+                assert(hashes[i].digest(item) == summary.hashes[i].digest(item))
+                { "Unable to apply merge, the randomness used are different" }
+            }
+        }
 
         for (i in 0 until n) {
             counters[i].merge(summary.counters[i])

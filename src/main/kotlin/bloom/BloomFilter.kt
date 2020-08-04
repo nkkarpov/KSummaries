@@ -53,9 +53,9 @@ class BloomFilter<T> (val maxSize: Int, val k: Int) {
         assert(k == summary.k) { "Unable to apply merge, the number of hash functions are not equal $k != ${summary.k}" }
 
         for (i in 0 until k) {
-            for (j in 0 until 10) {
-                assert(hashes[i].digest(Random.nextInt().toString().toByteArray())
-            == summary.hashes[i].digest(Random.nextInt().toString().toByteArray()))
+            for (j in 0 until 5) {
+                val item = Random.nextInt().toString().toByteArray()
+                assert(hashes[i].digest(item) == summary.hashes[i].digest(item))
                 { "Unable to apply merge, the randomness used are different" }
             }
         }
