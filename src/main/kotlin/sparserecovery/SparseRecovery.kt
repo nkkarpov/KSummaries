@@ -2,10 +2,13 @@ package sparserecovery
 
 import bloom.BloomFilter
 import java.security.MessageDigest
+import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class Cell {
-    var count = 0
+    var count = 0.0
     var sum = 0.0
     var fingerprint: BloomFilter<Int>
 
@@ -22,14 +25,16 @@ class Cell {
 
 class SparseRecovery<T> {
     // n counters
-    private var counters = emptyArray<Cell>().toMutableList()
+    private val counters = emptyArray<Cell>().toMutableList()
     private var n: Int
     // l hash functions
-    private var hashes = emptyArray<MessageDigest>().toMutableList()
+    private val hashes = emptyArray<MessageDigest>().toMutableList()
     private var l: Int
     // parameters for bloom filters
     private var maxSize: Int
     private var k: Int
+    // threshold in division
+    private val threshold = 0.000001
 
     constructor(n: Int, l: Int): this(n,l,n,l)
 
@@ -48,13 +53,49 @@ class SparseRecovery<T> {
     }
 
     fun update(key: Int, weight: Double = 1.0) {
-        return
+        val set = emptySet<Int>().toMutableSet()
+//        println("Insert " + key)
+        for (i in 0 until l) {
+            val hash = hashes[i].digest(key.toString().toByteArray())
+            val index = getIndex(hash, n)
+            if (set.isEmpty() || (!set.contains(index))) {
+                set.add(index)
+//                println("item " + key + " in cell " + index)
+                counters[index].count += weight
+                counters[index].sum += weight*key
+                counters[index].fingerprint.update(key)
+            }
+        }
     }
 
     fun query(): IntArray {
-        val res = emptyArray<Int>().toMutableList()
+        val res = emptyArray<Int>().toMutableSet()
+        while (query_one_round(res)) {}
         println(res)
         return res.toIntArray()
+    }
+
+    fun query_one_round(set: MutableSet<Int>): Boolean {
+        var flag = false
+        for (i in 0 until n) {
+            val count_i = counters[i].count
+            if (count_i.absoluteValue <= threshold) continue
+            val sum_i = counters[i].sum
+            val fingerprint_i = counters[i].fingerprint
+            val item = sum_i.div(count_i)
+
+//            println("item: " + item.roundToInt() + " actual: " + item + " " + fingerprint_i.query(item.roundToInt()))
+            // If succeed
+            if (abs(item.roundToInt() - item) <= threshold
+                    && fingerprint_i.query(item.roundToInt())) {
+                // At least one item is recovered
+                flag = true
+                set.add(item.roundToInt())
+                update(item.roundToInt(), count_i*(-1))
+            }
+        }
+        println()
+        return flag
     }
 
     fun merge(summary: SparseRecovery<T>) {
@@ -75,6 +116,15 @@ class SparseRecovery<T> {
         for (i in 0 until n) {
             counters[i].merge(summary.counters[i])
         }
-        return
+    }
+
+    private fun getIndex(bytes: ByteArray, max: Int) : Int {
+        var result = 0
+        var shift = 0
+        for (i in 0 until 8) {
+            result = result or (bytes[i].toInt() shl shift)
+            shift += 8
+        }
+        return result.absoluteValue.rem(max)
     }
 }
