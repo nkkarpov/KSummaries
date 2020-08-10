@@ -68,14 +68,22 @@ class SparseRecovery<T> {
         }
     }
 
-    fun query(): IntArray {
+    fun query(): IntArray? {
         val res = emptyArray<Int>().toMutableSet()
-        while (query_one_round(res)) {}
+        while (queryOneRound(res)) {}
+        if (failCheck()) return null
         println(res)
         return res.toIntArray()
     }
 
-    fun query_one_round(set: MutableSet<Int>): Boolean {
+    private fun failCheck(): Boolean{
+        for (i in 0 until n) {
+            if (counters[i].count > threshold) return true
+        }
+        return false
+    }
+
+    private fun queryOneRound(set: MutableSet<Int>): Boolean {
         var flag = false
         for (i in 0 until n) {
             val count_i = counters[i].count
