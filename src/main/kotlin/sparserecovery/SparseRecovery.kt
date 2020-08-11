@@ -68,12 +68,12 @@ class SparseRecovery<T> {
         }
     }
 
-    fun query(): IntArray? {
+    fun query(): List<Int>? {
         val res = emptyArray<Int>().toMutableSet()
         while (queryOneRound(res)) {}
         if (failCheck()) return null
         println(res)
-        return res.toIntArray()
+        return res.toList()
     }
 
     private fun failCheck(): Boolean{
