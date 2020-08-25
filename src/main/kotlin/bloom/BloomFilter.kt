@@ -1,3 +1,11 @@
+/*
+@author     Yan Song (songyan@iu.edu)
+@license    See LICENSE file
+
+BloomFilter is used to test whether an element is a member of a set.
+The returned results may contain false positives but no false negatives.
+ */
+
 package bloom
 
 import java.security.MessageDigest
