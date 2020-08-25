@@ -1,3 +1,11 @@
+/*
+@author     Nikolai Karpov (kimaska@gmail.com)
+@license    See LICENSE file
+
+Misra–Gries summary is used to estimate the item frequency.
+This summary only accepts positive weights.
+ */
+
 package frequencies
 
 import misc.Counter

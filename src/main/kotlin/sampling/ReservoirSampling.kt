@@ -1,3 +1,11 @@
+/*
+@author     Nikolai Karpov (kimaska@gmail.com)
+@license    See LICENSE file
+
+Reservoir Sampling is used to randomly sample items from a data stream.
+This summary treats every item as distinct element.
+ */
+
 package sampling
 
 import kotlin.math.min
