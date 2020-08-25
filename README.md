@@ -8,7 +8,7 @@ A Kotlin library for mergeable summarizing data structures.
 
 ### Set
 
-Bloom Filters for set membership
+[Bloom Filter](https://en.wikipedia.org/wiki/Bloom_filter) for set membership
 
 Fingerprints for set equality
 
@@ -16,7 +16,7 @@ HyperLogLog for set cardinality
 
 ### Item Frequency Estimation
 
-Misra-Gries
+[Misra-Gries](https://people.csail.mit.edu/rrw/6.045-2019/encalgs-mg.pdf)
 
 SpaceSaving
 
@@ -25,6 +25,8 @@ Count-Min Sketch
 Count Sketch
 
 ### L_p Norm Estimation
+
+[Reservoir Sampling](https://en.wikipedia.org/wiki/Reservoir_sampling)
 
 AMS Sketch for L_2 norm
 
@@ -38,7 +40,9 @@ Distinct Sampling
 
 L_p Sampling
 
+## Implementation Detail
 
+All data structure have at least three  
 
 
 
