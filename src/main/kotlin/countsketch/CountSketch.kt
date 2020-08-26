@@ -1,3 +1,11 @@
+/*
+@author     Yan Song (songyan@iu.edu)
+@license    See LICENSE file
+
+Count Sketch is used to estimate the item frequency.
+This summary can accept both positive and negative weights.
+ */
+
 package countsketch
 
 import java.security.MessageDigest

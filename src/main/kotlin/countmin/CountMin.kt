@@ -1,6 +1,13 @@
+/*
+@author     Yan Song (songyan@iu.edu)
+@license    See LICENSE file
+
+Count-Min Sketch is used to estimate the item frequency.
+This summary only accepts positive weights.
+ */
+
 package countmin
 
-import misc.Counter
 import java.security.MessageDigest
 import kotlin.math.absoluteValue
 import kotlin.math.min
