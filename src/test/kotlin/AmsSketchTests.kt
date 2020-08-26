@@ -1,6 +1,6 @@
 package frequencies.tests
 
-import misc.amssketch.AmsSketch
+import amssketch.AmsSketch
 import org.junit.Test
 import kotlin.random.Random
 import kotlin.test.assertFails

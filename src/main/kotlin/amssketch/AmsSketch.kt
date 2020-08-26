@@ -1,4 +1,12 @@
-package misc.amssketch
+/*
+@author     Yan Song (songyan@iu.edu)
+@license    See LICENSE file
+
+AMS Sketch is used to estimate the L_2 norm of the input vector.
+This summary can accept both positive and negative weights.
+ */
+
+package amssketch
 
 import countsketch.CountSketch
 import kotlin.math.pow
