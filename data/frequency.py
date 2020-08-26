@@ -1,7 +1,8 @@
 import sys
 
 # input_file = "T10I4D100K"
-input_file = "T40I10D100K"
+# input_file = "T40I10D100K"
+# input_file = "kosarak"
 
 # input_file = sys.argv[1]
 
