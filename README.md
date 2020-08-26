@@ -49,3 +49,11 @@ Tests are provided in "src/test".
 Test datasets are from 
 [Frequent Itemset Mining Dataset](http://fimi.uantwerpen.be/data/) 
 and [CAIDA Anonymized Internet Traces Dataset](https://www.caida.org/data/passive/passive_dataset.xml).
+
+## Contributors
+
+- Nikolai Karpov
+
+- Yan Song <songyan@iu.edu>
+
+- [Qin Zhang](http://homes.sice.indiana.edu/qzhangcs/) (Principal Investigator)
