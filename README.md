@@ -28,7 +28,7 @@ SpaceSaving
 
 [Reservoir Sampling](https://en.wikipedia.org/wiki/Reservoir_sampling)
 
-AMS Sketch for L_2 norm
+[AMS Sketch for L_2 norm](http://dimacs.rutgers.edu/~graham/pubs/papers/encalgs-ams.pdf)
 
 L_p Sketch 
 
@@ -45,3 +45,7 @@ L_p Sampling
 All data structures have at least three operations: update, query and merge.
 
 Tests are provided in "src/test".
+
+Test datasets are from 
+[Frequent Itemset Mining Dataset](http://fimi.uantwerpen.be/data/) 
+and [CAIDA Anonymized Internet Traces Dataset](https://www.caida.org/data/passive/passive_dataset.xml).
