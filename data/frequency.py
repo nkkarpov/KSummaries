@@ -1,9 +1,9 @@
 import sys
 
 # input_file = "T10I4D100K"
-# input_file = "T40I10D100K"
+input_file = "T40I10D100K"
 
-input_file = sys.argv[1]
+# input_file = sys.argv[1]
 
 dic = {}
 
@@ -39,3 +39,19 @@ for k, v in zip(keys, values):
     output.write(str(v))
     output.write("\n")
 output.close()
+
+value_frequency_dict = {}
+for v in values:
+    if v in value_frequency_dict:
+        value_frequency_dict[v] += 1
+    else:
+        value_frequency_dict[v] = 1
+
+output_file = input_file+"_frequency.txt"
+output = open(output_file, "w")
+for k, v in value_frequency_dict.items():
+    output.write(str(k))
+    output.write(" ")
+    output.write(str(v))
+    output.write("\n")
+output.close
