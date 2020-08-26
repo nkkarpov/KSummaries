@@ -8,37 +8,37 @@ A Kotlin library for mergeable summarizing data structures.
 
 ### Set
 
-[Bloom Filter](https://en.wikipedia.org/wiki/Bloom_filter) for set membership
+- [Bloom Filter](https://en.wikipedia.org/wiki/Bloom_filter) for set membership
 
-Fingerprints for set equality
+- Fingerprints for set equality
 
-HyperLogLog for set cardinality
+- HyperLogLog for set cardinality
 
 ### Item Frequency Estimation
 
-[Misra-Gries](https://people.csail.mit.edu/rrw/6.045-2019/encalgs-mg.pdf)
+- [Misra-Gries](https://people.csail.mit.edu/rrw/6.045-2019/encalgs-mg.pdf)
 
-SpaceSaving
+- SpaceSaving
 
-[Count-Min Sketch](https://en.wikipedia.org/wiki/Count–min_sketch)
+- [Count-Min Sketch](https://en.wikipedia.org/wiki/Count–min_sketch)
 
-[Count Sketch](https://courses.cs.washington.edu/courses/cse522/14sp/lectures/lect05.pdf)
+- [Count Sketch](https://courses.cs.washington.edu/courses/cse522/14sp/lectures/lect05.pdf)
 
 ### L_p Norm Estimation
 
-[Reservoir Sampling](https://en.wikipedia.org/wiki/Reservoir_sampling)
+- [AMS Sketch for L_2 norm](http://dimacs.rutgers.edu/~graham/pubs/papers/encalgs-ams.pdf)
 
-[AMS Sketch for L_2 norm](http://dimacs.rutgers.edu/~graham/pubs/papers/encalgs-ams.pdf)
-
-L_p Sketch 
+- L_p Sketch 
 
 ### Sampling
 
-Sparse Vector Recovery
+- [Reservoir Sampling](https://en.wikipedia.org/wiki/Reservoir_sampling)
 
-Distinct Sampling / L_0 Sampling
+- Sparse Vector Recovery
 
-L_p Sampling
+- Distinct Sampling / L_0 Sampling
+
+- L_p Sampling
 
 ## Implementation Detail
 
