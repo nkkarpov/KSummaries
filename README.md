@@ -20,9 +20,9 @@ HyperLogLog for set cardinality
 
 SpaceSaving
 
-Count-Min Sketch
+[Count-Min Sketch](https://en.wikipedia.org/wiki/Count–min_sketch)
 
-Count Sketch
+[Count Sketch](https://courses.cs.washington.edu/courses/cse522/14sp/lectures/lect05.pdf)
 
 ### L_p Norm Estimation
 
@@ -36,13 +36,12 @@ L_p Sketch
 
 Sparse Vector Recovery
 
-Distinct Sampling
+Distinct Sampling / L_0 Sampling
 
 L_p Sampling
 
 ## Implementation Detail
 
-All data structure have at least three  
+All data structures have at least three operations: update, query and merge.
 
-
-
+Tests are provided in "src/test".
