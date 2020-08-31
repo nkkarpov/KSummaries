@@ -42,21 +42,31 @@ class BloomFilterTests {
 
         var error_rate = 0.0
         var errors = 0
-        for (i in 1001 until 2000) {
+        for (i in 100000 until 200000) {
             val item = i.toString()
             if (bf.query(item))
                 errors += 1
         }
-        error_rate = errors / 1000.0
+        error_rate = errors / 100000.0
         println(("Error rate on T40I10D100K dataset with %d slots and %d hash functions " +
                 "is %.2f %%").format(maxSize, k, error_rate*100))
     }
 
     @Test
+    // TODO Need to update
     fun testT40I10D100K() {
         val fileName = "data/T40I10D100K.txt"
-        val maxSize = 100
-        val k = 5
+        val maxSize = 10000
+        val k = 3
+        testFile(fileName, maxSize, k)
+    }
+
+    @Test
+    // TODO Need to update
+    fun testKosarak() {
+        val fileName = "data/kosarak.txt"
+        val maxSize = 100000
+        val k = 3
         testFile(fileName, maxSize, k)
     }
 }
