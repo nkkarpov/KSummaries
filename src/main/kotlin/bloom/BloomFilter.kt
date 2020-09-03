@@ -50,7 +50,7 @@ class BloomFilter<T> (val maxSize: Int, val k: Int) {
 
         // loop list and pick bigger
         summary.counters.forEachIndexed { index, element ->
-            counters[index] = (counters[index] and element)
+            counters[index] = (counters[index] or element)
         }
     }
 }
