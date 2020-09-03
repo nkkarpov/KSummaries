@@ -8,7 +8,7 @@ This summary can accept both positive and negative weights.
 
 package countsketch
 
-import java.security.MessageDigest
+import saltedhash.SaltedHash
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
@@ -23,9 +23,9 @@ open class CountSketch<T> {
     var t: Int
 
     private val p = 7368787
-    private val md = MessageDigest.getInstance("SHA-256")
+    private val hash: SaltedHash
 
-    constructor(d: Int, t: Int) {
+    constructor(d: Int, t: Int, intSeed: Int, hashSeed: Int) {
         counters = Array(d, { Array(t, {0.0})})
         arrA = Array(d, {0})
         arrB = Array(d, {0})
@@ -35,14 +35,18 @@ open class CountSketch<T> {
         this.d = d
         this.t = t
 
-        // Initialize hash functions
+        hash = SaltedHash(1, hashSeed)
+
+        // Initialize hash array
+        val rd = Random(intSeed)
         for (i in 0 until d) {
-            arrA[i] = Random.nextInt(p)
-            arrB[i] = Random.nextInt(p)
-            arrC[i] = Random.nextInt(p)
-            arrD[i] = Random.nextInt(p)
+            arrA[i] = rd.nextInt(p).absoluteValue
+            arrB[i] = rd.nextInt(p).absoluteValue
+            arrC[i] = rd.nextInt(p).absoluteValue
+            arrD[i] = rd.nextInt(p).absoluteValue
         }
     }
+    constructor(d: Int, t: Int): this(d, t, 20, 20)
 
     fun update (key: T, weight: Double) {
         val hash = getHash(key)
@@ -68,6 +72,8 @@ open class CountSketch<T> {
     fun merge (summary: CountSketch<T>) {
         assert(d == summary.d && t == summary.t)
         { "Unable to apply merge, the size of rows is not equal $d != ${summary.d}" }
+        assert(hash.mergeableWith(summary.hash))
+        {  "Unable to apply merge, different randomness applied!" }
         for (i in 0 until d) {
             assert(arrA[i] == summary.arrA[i] && arrB[i] == summary.arrB[i]
                     && arrC[i] == summary.arrC[i] && arrD[i] == summary.arrD[i])
@@ -83,8 +89,7 @@ open class CountSketch<T> {
 
     // Obtain the col index for a given row
     fun getIndex(hash: Int, index: Int) : Int {
-        val index = (arrA[index] * hash + arrB[index]).absoluteValue.rem(p).rem(t)
-        return index
+        return (arrA[index] * hash + arrB[index]).absoluteValue.rem(p).rem(t)
     }
 
     // Obtain the sign
@@ -94,15 +99,11 @@ open class CountSketch<T> {
         return sign
     }
 
+    fun getHash(key: String) : Int {
+        return hash.getHash(0, key.toString())
+    }
     // Item to int hash value
     fun getHash(key: T) : Int {
-        val bytes = md.digest(key.hashCode().toString().toByteArray())
-        var result = 0
-        var shift = 0
-        for (i in 0 until 8) {
-            result = result or (bytes.get(i).toInt() shl shift)
-            shift += 8
-        }
-        return result.absoluteValue.rem(p)
+        return hash.getHash(0, key.hashCode().toString())
     }
 }
