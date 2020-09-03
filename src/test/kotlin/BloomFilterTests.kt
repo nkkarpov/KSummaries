@@ -30,43 +30,75 @@ class BloomFilterTests {
         assertFails("Invalid merge") { a.merge(b) }
     }
 
-    fun testFile(fileName: String, maxSize: Int, k: Int) {
-        val reader = FileReaderBuffer(fileName)
-        val bf = BloomFilter<String>(maxSize, k)
+    fun reportErrorRate(bf: BloomFilter<String>, dataType: String): Double {
+        if (dataType == "Int") {
+            var error_rate = 0.0
+            var errors = 0
+            for (i in 100000 until 200000) {
+                val item = i.toString()
+                if (bf.query(item))
+                    errors += 1
+            }
+            error_rate = errors / 100000.0
+            return error_rate
+
+        } else if (dataType == "String") {
+            return 0.0
+        } else {
+            error("unrecognized data type")
+        }
+    }
+
+    fun testFiles(fileName1: String, fileName2: String, maxSize: Int, k: Int) {
+        val reader1 = FileReaderBuffer(fileName1)
+        val reader2 = FileReaderBuffer(fileName2)
+        val bf1 = BloomFilter<String>(maxSize, k)
+        val bf2 = BloomFilter<String>(maxSize, k)
+
+        // bf1 read file1; bf2 read file2
         var word: String?
-        word = reader.next()
+        word = reader1.next()
         while (word != null) {
-            bf.update(word)
-            word = reader.next()
+            bf1.update(word)
+            word = reader1.next()
+        }
+        word = reader2.next()
+        while (word != null) {
+            bf2.update(word)
+            word = reader2.next()
         }
 
-        var error_rate = 0.0
-        var errors = 0
-        for (i in 100000 until 200000) {
-            val item = i.toString()
-            if (bf.query(item))
-                errors += 1
-        }
-        error_rate = errors / 100000.0
-        println(("Error rate on T40I10D100K dataset with %d slots and %d hash functions " +
-                "is %.2f %%").format(maxSize, k, error_rate*100))
+        // test error rate on bf1
+        val errorRate1 = reportErrorRate(bf1, "Int")
+        println(("Error rate on " + fileName1 + " dataset with %d slots and %d hash functions " +
+                "is %.2f %%").format(maxSize, k, errorRate1*100))
+
+        // test error rate on bf2
+        val errorRate2 = reportErrorRate(bf2, "Int")
+        println(("Error rate on " + fileName2 + " dataset with %d slots and %d hash functions " +
+                "is %.2f %%").format(maxSize, k, errorRate2*100))
+
+        // merge bf2 to bf1
+        bf1.merge(bf2)
+        val errorRateMerged = reportErrorRate(bf1, "Int")
+
+        println(("Error rate on" + fileName1 + " and " + fileName2
+                + "merged dataset with %d slots and %d hash functions " +
+                "is %.2f %%").format(maxSize, k, errorRateMerged*100))
+
     }
 
     @Test
-    // TODO Need to update
-    fun testT40I10D100K() {
-        val fileName = "data/T40I10D100K.txt"
-        val maxSize = 10000
-        val k = 3
-        testFile(fileName, maxSize, k)
+    fun testMergeT1T2() {
+        val fileNameT1 = "data/T10I4D100K.txt"
+        val fileNameT2 = "data/T40I10D100K.txt"
+        testFiles(fileNameT1, fileNameT2, 10000, 5)
     }
 
     @Test
-    // TODO Need to update
-    fun testKosarak() {
-        val fileName = "data/kosarak.txt"
-        val maxSize = 100000
-        val k = 3
-        testFile(fileName, maxSize, k)
+    fun testMergeT2K() {
+        val fileNameT2 = "data/T40I10D100K.txt"
+        val fileNameK = "data/kosarak.txt"
+        testFiles(fileNameT2, fileNameK, 500000, 7)
     }
 }
