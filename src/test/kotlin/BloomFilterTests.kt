@@ -101,4 +101,11 @@ class BloomFilterTests {
         val fileNameK = "data/kosarak.txt"
         testFiles(fileNameT2, fileNameK, 500000, 7)
     }
+
+    @Test
+    fun testMergeN1N2() {
+        val fileNameN1 = "data/n1.txt"
+        val fileNameN2 = "data/n2.txt"
+        testFiles(fileNameN1, fileNameN2, 50000000, 7)
+    }
 }
