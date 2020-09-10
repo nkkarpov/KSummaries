@@ -34,17 +34,18 @@ class CountMin<T> {
         // Initialize hash array
         val rd = Random(intSeed)
         for (i in 0 until d) {
-            arrA[i] = rd.nextInt(p).absoluteValue
-            arrB[i] = rd.nextInt(p).absoluteValue
+            arrA[i] = rd.nextInt().absoluteValue
+            arrB[i] = rd.nextInt().absoluteValue
         }
         hash = SaltedHash(1, hashSeed)
     }
     constructor(d: Int, t: Int): this(d, t, 10, 10)
 
-    fun update (key: T, weight: Double) {
+    fun update (key: T, weight: Double = 1.0) {
         val hash = getHash(key)
         for (i in 0 until d) {
             val index = getIndex(hash, i)
+//            println("Word: $key, Hash: $hash, Index: $index")
             counters[i][index] += weight
         }
     }
@@ -76,7 +77,8 @@ class CountMin<T> {
     }
 
     private fun getIndex(hash: Int, index: Int) : Int {
-        return (arrA[index] * hash + arrB[index]).rem(p).rem(t).absoluteValue
+        val index =  (arrA[index] * hash + arrB[index]).rem(p).rem(t).absoluteValue
+        return index
     }
 
     private fun getHash(key: String): Int {
