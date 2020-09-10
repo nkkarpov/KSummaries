@@ -4,7 +4,7 @@ import sys
 # input_file = "T40I10D100K"
 # input_file = "kosarak"
 
-# input_file = sys.argv[1]
+input_file = sys.argv[1]
 
 dic = {}
 
@@ -32,7 +32,7 @@ print("Number of total elements: " + str(sum(values)))
 print("Most frequent item: " + keys[len(keys)-1] + " with occurance: " + str(values[len(keys)-1]))
 print("Least frequent item: " + keys[0] + " with occurance: " + str(values[0]))
 
-output_file = input_file+"_analysis.txt"
+output_file = input_file+"_frequency.txt"
 output = open(output_file, "w")
 for k, v in zip(keys, values):
     output.write(k)
@@ -48,7 +48,7 @@ for v in values:
     else:
         value_frequency_dict[v] = 1
 
-output_file = input_file+"_frequency.txt"
+output_file = input_file+"_analysis.txt"
 output = open(output_file, "w")
 for k, v in value_frequency_dict.items():
     output.write(str(k))

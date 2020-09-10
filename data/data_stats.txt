@@ -1,0 +1,29 @@
+kosarak:
+Number of distinct elements: 41270
+Number of total elements: 8019015
+Most frequent item: 6 with occurance: 601374
+Least frequent item: 1109 with occurance: 1
+
+T40I10D100K:
+Number of distinct elements: 942
+Number of total elements: 3960507
+Most frequent item: 368 with occurance: 28738
+Least frequent item: 596 with occurance: 5
+
+T10I4D100K:
+Number of distinct elements: 870
+Number of total elements: 1010228
+Most frequent item: 368 with occurance: 7828
+Least frequent item: 615 with occurance: 1
+
+N1
+Number of distinct elements: 893294
+Number of total elements: 27461728
+Most frequent item: 73.167.155.193,251.215.115.82 with occurance: 916516
+Least frequent item: 203.99.138.125,205.213.189.151 with occurance: 1
+
+N2
+Number of distinct elements: 888287
+Number of total elements: 26915410
+Most frequent item: 73.167.155.193,251.215.115.82 with occurance: 849044
+Least frequent item: 41.144.138.61,205.166.58.78 with occurance: 1
