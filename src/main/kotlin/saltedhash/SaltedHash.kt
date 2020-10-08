@@ -5,7 +5,7 @@ import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 class SaltedHash {
-    private val hashes = mutableListOf<MessageDigest>()
+    private val md = MessageDigest.getInstance("SHA-256")
     private val salts = mutableListOf<Int>()
 
     // Input number of hash functions
@@ -13,10 +13,6 @@ class SaltedHash {
         val rd = Random(seed)
 
         for (i in 0 until numHash) {
-            // Initialize hash functions
-            val md = MessageDigest.getInstance("SHA-256")
-            hashes.add(md)
-
             // Initialize salts
             val salt = rd.nextInt()
             salts.add(salt)
@@ -24,11 +20,11 @@ class SaltedHash {
     }
 
     // Input message, output int hash value
-    // Returned by the hashes[index]
+    // Feed with salts[i] first and then hash
     fun getHash(index: Int, message: String): Int {
-        // Add corresponding salt
-        hashes[index].update(salts[index].toByte())
-        val digest = hashes[index].digest(message.toByteArray())
+        // Add corresponding salt then hash
+        md.update(salts[index].toByte())
+        val digest = md.digest(message.toByteArray())
 
         // Convert digest[0-7] to a positive integer
         var result = 0
@@ -50,11 +46,8 @@ class SaltedHash {
     }
 
     fun mergeableWith(saltedHash: SaltedHash): Boolean{
-        // Check hash function size
-        if (hashes.size != saltedHash.hashes.size) return false
-
         // Check salts
-        for (i in 0 until hashes.size) {
+        for (i in 0 until salts.size) {
             if (salts[i] != saltedHash.salts[i]) return false
         }
 
