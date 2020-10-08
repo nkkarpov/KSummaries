@@ -1,11 +1,9 @@
 package sparserecovery
 
 import bloom.BloomFilter
-import java.security.MessageDigest
-import kotlin.math.abs
+import saltedhash.SaltedHash
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 class Cell {
     var count = 0.0
@@ -28,7 +26,7 @@ class SparseRecovery<T> {
     private val counters = emptyArray<Cell>().toMutableList()
     private var n: Int
     // l hash functions
-    private val hashes = emptyArray<MessageDigest>().toMutableList()
+    private var hashes: SaltedHash
     private var l: Int
     // parameters for bloom filters
     private var maxSize: Int
@@ -38,7 +36,7 @@ class SparseRecovery<T> {
 
     constructor(n: Int, l: Int): this(n,l,n,l)
 
-    constructor(n: Int, l: Int, maxSize: Int, k: Int) {
+    constructor(n: Int, l: Int, maxSize: Int, k: Int, hashSeed: Int = 100) {
         this.n = if (n > 0) n else error("parameter is negative")
         this.l = if (l > 0) l else error("parameter is negative")
         this.maxSize = if (maxSize > 0) maxSize else error("parameter is negative")
@@ -47,17 +45,14 @@ class SparseRecovery<T> {
         for (i in 0 until this.n) {
             counters.add(Cell(maxSize, k))
         }
-        for (i in 0 until this.l) {
-            hashes.add(MessageDigest.getInstance("SHA-256"))
-        }
+        hashes = SaltedHash(l, hashSeed)
     }
 
     fun update(key: Int, weight: Double = 1.0) {
         val set = emptySet<Int>().toMutableSet()
 //        println("Insert " + key)
         for (i in 0 until l) {
-            val hash = hashes[i].digest(key.toString().toByteArray())
-            val index = getIndex(hash, n)
+            val index = hashes.getIndex(i, key.toString(), n)
             if (set.isEmpty() || (!set.contains(index))) {
                 set.add(index)
 //                println("item " + key + " in cell " + index)
@@ -72,10 +67,11 @@ class SparseRecovery<T> {
         val res = emptyArray<Int>().toMutableSet()
         while (queryOneRound(res)) {}
         if (failCheck()) return null
-        println(res)
+//        println(res)
         return res.toList()
     }
 
+    // Return true if the recovery fails
     private fun failCheck(): Boolean{
         for (i in 0 until n) {
             if (counters[i].count > threshold) return true
@@ -87,22 +83,24 @@ class SparseRecovery<T> {
         var flag = false
         for (i in 0 until n) {
             val count_i = counters[i].count
+            // No item found in the cell
             if (count_i.absoluteValue <= threshold) continue
+
             val sum_i = counters[i].sum
             val fingerprint_i = counters[i].fingerprint
-            val item = sum_i.div(count_i)
+            val possibleItem = sum_i.div(count_i)
+            // Not close to an integer
+            if ((possibleItem - possibleItem.roundToInt()).absoluteValue > threshold) continue
 
-//            println("item: " + item.roundToInt() + " actual: " + item + " " + fingerprint_i.query(item.roundToInt()))
-            // If succeed
-            if (abs(item.roundToInt() - item) <= threshold
-                    && fingerprint_i.query(item.roundToInt())) {
+            val item = possibleItem.roundToInt()
+            // If item fits the fingerprint
+            if (fingerprint_i.query(item)) {
                 // At least one item is recovered
                 flag = true
-                set.add(item.roundToInt())
-                update(item.roundToInt(), count_i*(-1))
+                set.add(item)
+                update(item, count_i*(-1))
             }
         }
-        println()
         return flag
     }
 
@@ -112,27 +110,11 @@ class SparseRecovery<T> {
         assert(l == summary.l) { "Unable to apply merge, the number of hash functions are not equal $l != ${summary.l}" }
         assert(maxSize == summary.maxSize) { "Unable to apply merge, the sizes are not equal $maxSize != ${summary.maxSize}" }
         assert(k == summary.k) { "Unable to apply merge, the number of hash functions are not equal $k != ${summary.k}" }
-
-        for (i in 0 until l) {
-            for (j in 0 until 10) {
-                val item = Random.nextInt().toString().toByteArray()
-                assert(hashes[i].digest(item) == summary.hashes[i].digest(item))
-                { "Unable to apply merge, the randomness used are different" }
-            }
-        }
+        assert(hashes.mergeableWith(summary.hashes)) { "Unable to apply merge, the number of hash functions are not equal $k != ${summary.k}" }
 
         for (i in 0 until n) {
             counters[i].merge(summary.counters[i])
         }
     }
 
-    private fun getIndex(bytes: ByteArray, max: Int) : Int {
-        var result = 0
-        var shift = 0
-        for (i in 0 until 8) {
-            result = result or (bytes[i].toInt() shl shift)
-            shift += 8
-        }
-        return result.absoluteValue.rem(max)
-    }
 }
