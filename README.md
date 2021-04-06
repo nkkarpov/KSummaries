@@ -40,7 +40,7 @@ A Kotlin library for mergeable summarizing data structures.
 
 - L_p Sampling
 
-## Implementation Detail
+## Graph 
 
 - Graph Connectivity
 
