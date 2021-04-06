@@ -42,6 +42,10 @@ A Kotlin library for mergeable summarizing data structures.
 
 ## Implementation Detail
 
+- Graph Connectivity
+
+## Implementation Detail
+
 All data structures have at least three operations: update, query and merge.
 
 Tests are provided in "src/test".
