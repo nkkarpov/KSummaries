@@ -38,13 +38,16 @@ class GraphConnectivity {
         // Make sure that n1 < n2
         if (n1 > n2) return update(n2, n1)
 
+        // TODO: how to store the edge?
         for (j in 0 until r) {
-            samplers[n1][j].update(n1*n+n2, 1.0)
-            samplers[n2][j].update(n1*n+n2, -1.0)
+//            samplers[n1][j].update(n1*n+n2, 1.0)
+//            samplers[n2][j].update(n1*n+n2, -1.0)
         }
     }
 
-    fun query() {}
+    fun query() {
+        // For each round, each supernode outputs a l0 sampling, then merge accordingly
+    }
 
     fun merge(summary: GraphConnectivity) {
         assert(n == summary.n) { "Unable to apply merge, the size of rows is not equal $n != ${summary.n}" }
@@ -56,4 +59,13 @@ class GraphConnectivity {
             }
         }
     }
+
+//    private fun edge_to_index(n1: Int, n2: Int): Int {
+//        return 0
+//    }
+//    private fun index_to_edge(index:Int):Pair<Int, Int> {
+//        var n1 = 0
+//        var n2 = 0
+//        return Pair(n1, n2)
+//    }
 }

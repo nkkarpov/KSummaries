@@ -44,6 +44,8 @@ A Kotlin library for mergeable summarizing data structures.
 
 - Graph Connectivity
 
+- Graph Bipartiteness
+
 ## Implementation Detail
 
 All data structures have at least three operations: update, query and merge.
