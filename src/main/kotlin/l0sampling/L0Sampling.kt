@@ -88,7 +88,7 @@ class L0Sampling {
     fun merge(summary: L0Sampling) {
         // merge check
         assert(m == summary.m) { "Unable to apply merge, the number of sizes are not equal $m != ${summary.m}" }
-        assert(!(queried or summary.queried)) { "Unable to apply merge, queried samplers are not able to merge" }
+//        assert(!(queried or summary.queried)) { "Unable to apply merge, queried samplers are not able to merge" }
 
         for (i in 0 until m) {
             recoveries[i].merge(summary.recoveries[i])

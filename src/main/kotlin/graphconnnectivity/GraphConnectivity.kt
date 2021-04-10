@@ -64,6 +64,8 @@ class GraphConnectivity {
                         cc -= 1
                         // merge to a supernode
                         union(i, n2)
+                        // set flag to be ture
+                        flag = true
                         if (i < n2) {
                             samplers[i].merge(samplers[n2])
                         } else {
@@ -88,7 +90,7 @@ class GraphConnectivity {
     private fun find(n: Int): Int {
         var n_ = n
         if (connectivityArray[n_] != n_) {
-            connectivityArray[n_] = find(n_)
+            connectivityArray[n_] = find(connectivityArray[n_])
         }
         return connectivityArray[n_]
     }
