@@ -13,10 +13,12 @@ class GraphConnectivity {
     // n: #nodes, m: #edges
     val n: Int
     val m: Int
-    // number of l0 sampler for each node (log n)
-    val r: Int
     // l0 samplers to store edge information
-    var samplers: Array<Array<L0Sampling>>
+    var samplers: Array<L0Sampling>
+    // number of connected components
+    var cc: Int
+    // connectivity array
+    private var connectivityArray: Array<Int>
 
     // n by r samplers
     // parameters for sampler: levles, size_recovery, num_hash_recovery
@@ -27,9 +29,13 @@ class GraphConnectivity {
                 hashSeed: Int = 100) {
         this.n = n
         this.m = m
-        this.r = r
-        samplers = Array(n) { Array(r) { L0Sampling(levels, size_recovery,num_hash_recovery,
-                                                    maxSize_fingerprint, num_hash_fingerprint, hashSeed) } }
+        this.cc = n
+        connectivityArray = Array(n, {0})
+        for (i in 0 until n) {
+            connectivityArray[i] = i
+        }
+        samplers = Array(n) { L0Sampling(levels, size_recovery, num_hash_recovery,
+                               maxSize_fingerprint, num_hash_fingerprint, hashSeed) }
     }
 
     // Give id of two nodes
@@ -38,34 +44,62 @@ class GraphConnectivity {
         // Make sure that n1 < n2
         if (n1 > n2) return update(n2, n1)
 
-        // TODO: how to store the edge?
-        for (j in 0 until r) {
-//            samplers[n1][j].update(n1*n+n2, 1.0)
-//            samplers[n2][j].update(n1*n+n2, -1.0)
-        }
+        samplers[n1].update(n2, 1.0)
+        samplers[n2].update(n1, -1.0)
     }
 
-    fun query() {
-        // For each round, each supernode outputs a l0 sampling, then merge accordingly
+    fun query(): Int {
+        var flag = true
+        // while there is still change in connected components
+        while (flag) {
+            flag = false
+            for (i in 0 until n) {
+                // check for each a supernode
+                if (i == connectivityArray[i]) {
+                    // output a edge
+                    val n2 = samplers[i].query()
+                    // if connect to another component
+                    if (n2 != null && !same_componnet(i, n2)) {
+                        // decrease count of connected component
+                        cc -= 1
+                        // merge to a supernode
+                        union(i, n2)
+                        if (i < n2) {
+                            samplers[i].merge(samplers[n2])
+                        } else {
+                            samplers[n2].merge(samplers[i])
+                        }
+                    }
+                }
+            }
+        }
+        return cc
     }
 
     fun merge(summary: GraphConnectivity) {
         assert(n == summary.n) { "Unable to apply merge, the size of rows is not equal $n != ${summary.n}" }
-        assert(r == summary.r) { "Unable to apply merge, the size of rows is not equal $r != ${summary.r}" }
 
         for (i in 0 until n) {
-            for (j in 0 until r) {
-                samplers[i][j].merge(summary.samplers[i][j])
-            }
+            samplers[i].merge(summary.samplers[i])
         }
     }
 
-//    private fun edge_to_index(n1: Int, n2: Int): Int {
-//        return 0
-//    }
-//    private fun index_to_edge(index:Int):Pair<Int, Int> {
-//        var n1 = 0
-//        var n2 = 0
-//        return Pair(n1, n2)
-//    }
+    // path compression
+    private fun find(n: Int): Int {
+        var n_ = n
+        if (connectivityArray[n_] != n_) {
+            connectivityArray[n_] = find(n_)
+        }
+        return connectivityArray[n_]
+    }
+
+    private fun same_componnet(n1: Int, n2: Int): Boolean {
+        return (find(n1) == find(n2))
+    }
+
+    private fun union(n1: Int, n2: Int) {
+        if (same_componnet(n1, n2)) return
+        if (find(n1) < find(n2)) connectivityArray[n2] = find(n1)
+        else connectivityArray[n1] = connectivityArray[n2]
+    }
 }
