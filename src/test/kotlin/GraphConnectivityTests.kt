@@ -11,7 +11,12 @@ class GraphConnectivityTests {
         for (i in 0 until 100) {
             sketch.update(i, i+1)
         }
-        sketch.query()
+        sketch.update(100, 0)
+        for (i in 0 until 99) {
+            sketch.update(i, i+2)
+        }
+        sketch.update(100, 1)
+        println(sketch.query())
     }
 
     @Test

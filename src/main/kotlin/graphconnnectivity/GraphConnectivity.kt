@@ -64,12 +64,14 @@ class GraphConnectivity {
                         cc -= 1
                         // merge to a supernode
                         union(i, n2)
+                        // find n2's supernode
+                        val n_super = connectivityArray[n2]
                         // set flag to be ture
                         flag = true
-                        if (i < n2) {
-                            samplers[i].merge(samplers[n2])
+                        if (i < n_super) {
+                            samplers[i].merge(samplers[n_super])
                         } else {
-                            samplers[n2].merge(samplers[i])
+                            samplers[n_super].merge(samplers[i])
                         }
                     }
                 }
