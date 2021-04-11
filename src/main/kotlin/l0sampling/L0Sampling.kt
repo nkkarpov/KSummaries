@@ -48,7 +48,7 @@ class L0Sampling {
 
     fun query(): Int? {
         if (queried and tempResults.isNotEmpty()) {
-            return tempResults[Random.nextInt().rem(tempResults.size).absoluteValue]
+            return tempResults[Random.nextInt().absoluteValue.rem(tempResults.size)]
         }
         if (queried) {
             return null
@@ -90,8 +90,20 @@ class L0Sampling {
         assert(m == summary.m) { "Unable to apply merge, the number of sizes are not equal $m != ${summary.m}" }
 //        assert(!(queried or summary.queried)) { "Unable to apply merge, queried samplers are not able to merge" }
 
-        for (i in 0 until m) {
-            recoveries[i].merge(summary.recoveries[i])
+        if (queried) {
+            summary.query()
+            tempResults.addAll(summary.tempResults)
+            tempResults = tempResults.distinct().toMutableList()
+//            println(tempResults)
+        } else if (summary.queried){
+            query()
+            tempResults.addAll(summary.tempResults)
+            tempResults = tempResults.distinct().toMutableList()
+//            println(tempResults)
+        } else {
+            for (i in 0 until m) {
+                recoveries[i].merge(summary.recoveries[i])
+            }
         }
     }
 }
