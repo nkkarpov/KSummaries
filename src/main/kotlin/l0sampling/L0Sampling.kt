@@ -14,8 +14,6 @@ class L0Sampling {
     val recoveries = emptyArray<SparseRecovery<Int>>().toMutableList()
     // compute probability to decide which level to go to
     val hash: SaltedHash
-    // is true if the sampler has been queried
-    var queried = false
     // Store the results if the sampler has been queried
     var tempResults = emptyList<Int>().toMutableList()
 
@@ -35,8 +33,6 @@ class L0Sampling {
 
     // m levels of possibilities
     fun update(key: Int, weight: Double = 1.0) {
-        if (queried) error("This l0 sampler has been queried")
-
         val prob = hash.getIndex(0, key.toString(), 2.0.pow(m-1).toInt())
         for (i in 0 until m) {
             if (prob < 2.0.pow(m-1-i).toInt()) {
@@ -47,13 +43,6 @@ class L0Sampling {
     }
 
     fun query(): Int? {
-        if (queried and tempResults.isNotEmpty()) {
-            return tempResults[Random.nextInt().absoluteValue.rem(tempResults.size)]
-        }
-        if (queried) {
-            return null
-        }
-
         var res = queryAll()
         if (res.isNotEmpty()) {
             res = res.toMutableList()
@@ -75,7 +64,7 @@ class L0Sampling {
         }
 
         // Change queried flag to true
-        queried = true
+//        queried = true
         // Store current results to tempResults
         for (i in res.indices) {
             tempResults.add(res[i])
@@ -90,20 +79,8 @@ class L0Sampling {
         assert(m == summary.m) { "Unable to apply merge, the number of sizes are not equal $m != ${summary.m}" }
 //        assert(!(queried or summary.queried)) { "Unable to apply merge, queried samplers are not able to merge" }
 
-        if (queried) {
-            summary.query()
-            tempResults.addAll(summary.tempResults)
-            tempResults = tempResults.distinct().toMutableList()
-//            println(tempResults)
-        } else if (summary.queried){
-            query()
-            tempResults.addAll(summary.tempResults)
-            tempResults = tempResults.distinct().toMutableList()
-//            println(tempResults)
-        } else {
-            for (i in 0 until m) {
-                recoveries[i].merge(summary.recoveries[i])
-            }
+        for (i in 0 until m) {
+            recoveries[i].merge(summary.recoveries[i])
         }
     }
 }

@@ -56,27 +56,31 @@ class GraphConnectivity {
             for (i in 0 until n) {
                 // check for each a supernode
                 if (i == connectivityArray[i]) {
+//                    println("Node " + i.toString())
                     // output a edge
                     val n2 = samplers[i].query()
                     // if connect to another component
+//                    if (n2!=null) println("  output " + n2.toString())
                     if (n2 != null && !same_componnet(i, n2)) {
+//                        println("  " + i.toString() + " and " + n2.toString() + " actual " + connectivityArray[n2].toString())
                         // decrease count of connected component
                         cc -= 1
-                        // merge to a supernode
-                        union(i, n2)
                         // find n2's supernode
                         val n_super = connectivityArray[n2]
+                        // merge to a supernode
+                        union(i, n_super)
+                        // find the new merged supernode id
+                        val i_super = connectivityArray[i]
                         // set flag to be ture
                         flag = true
-                        if (i < n_super) {
-                            samplers[i].merge(samplers[n_super])
-                        } else {
-                            samplers[n_super].merge(samplers[i])
-                        }
+//                        println("  merge node " + i.toString() + " and " + n2.toString())
+//                        println("  to node " + i_super.toString())
+                        samplers[i_super].merge(samplers[n_super])
                     }
                 }
             }
         }
+        println(connectivityArray.toList())
         return cc
     }
 

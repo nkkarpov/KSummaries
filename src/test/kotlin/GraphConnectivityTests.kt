@@ -7,15 +7,15 @@ import kotlin.test.assertFails
 class GraphConnectivityTests {
     @Test
     fun testInit() {
-        val sketch = GraphConnectivity(101, 100, 5, 5, 10, 3, 10, 5)
-        for (i in 0 until 100) {
+        val sketch = GraphConnectivity(10, 100, 5, 5, 10, 3, 10, 5)
+        for (i in 0 until 9) {
             sketch.update(i, i+1)
         }
-        sketch.update(100, 0)
-        for (i in 0 until 99) {
-            sketch.update(i, i+2)
-        }
-        sketch.update(100, 1)
+        sketch.update(9, 0)
+//        for (i in 0 until 99) {
+//            sketch.update(i, i+2)
+//        }
+//        sketch.update(100, 1)
         println(sketch.query())
     }
 

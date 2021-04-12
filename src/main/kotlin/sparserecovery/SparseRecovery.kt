@@ -9,9 +9,21 @@ class Cell {
     var count = 0.0
     var sum = 0.0
     var fingerprint: BloomFilter<Int>
+    val maxSize: Int
+    val k: Int
 
     constructor(maxSize: Int, k: Int) {
+        this.maxSize = maxSize
+        this.k = k
         fingerprint = BloomFilter<Int>(maxSize, k)
+    }
+
+    fun clone(): Cell{
+        var copy = Cell(maxSize, k)
+        copy.count = this.count
+        copy.sum = this.sum
+        copy.fingerprint = this.fingerprint.clone()
+        return copy
     }
 
     fun merge(summary: Cell) {
@@ -24,6 +36,7 @@ class Cell {
 class SparseRecovery<T> {
     // n counters
     private val counters = emptyArray<Cell>().toMutableList()
+    private val counters_records = emptyArray<Cell>().toMutableList()
     private var n: Int
     // l hash functions
     private var hashes: SaltedHash
@@ -33,6 +46,7 @@ class SparseRecovery<T> {
     private var k: Int
     // threshold in division
     private val threshold = 0.000001
+    private var hashSeed = 100
 
     constructor(n: Int, l: Int): this(n,l,n,l)
 
@@ -41,9 +55,11 @@ class SparseRecovery<T> {
         this.l = if (l > 0) l else error("parameter is negative")
         this.maxSize = if (maxSize > 0) maxSize else error("parameter is negative")
         this.k = if (k > 0) k else error("parameter is negative")
+        this.hashSeed = hashSeed
 
         for (i in 0 until this.n) {
             counters.add(Cell(maxSize, k))
+            counters_records.add(Cell(maxSize, k))
         }
         hashes = SaltedHash(l, hashSeed)
     }
@@ -64,10 +80,16 @@ class SparseRecovery<T> {
     }
 
     fun query(): List<Int>? {
+        for (i in 0 until counters.size) {
+            counters_records[i] = counters[i].clone()
+        }
         val res = emptyArray<Int>().toMutableSet()
         while (queryOneRound(res)) {}
         if (failCheck()) return null
 //        println(res)
+        for (i in 0 until counters_records.size) {
+            counters[i] = counters_records[i].clone()
+        }
         return res.toList()
     }
 
@@ -81,6 +103,7 @@ class SparseRecovery<T> {
 
     private fun queryOneRound(set: MutableSet<Int>): Boolean {
         var flag = false
+
         for (i in 0 until n) {
             val count_i = counters[i].count
             // No item found in the cell
@@ -96,9 +119,11 @@ class SparseRecovery<T> {
             // If item fits the fingerprint
             if (fingerprint_i.query(item)) {
                 // At least one item is recovered
-                flag = true
-                set.add(item)
-                update(item, count_i*(-1))
+                if (!set.contains(item)) {
+                    update(item, count_i*(-1))
+                    set.add(item)
+                    flag = true
+                }
             }
         }
         return flag

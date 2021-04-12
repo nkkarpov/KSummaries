@@ -18,9 +18,17 @@ class BloomFilter<T> (val maxSize: Int, val k: Int) {
 
     init {
         for (i in 0 until maxSize) {
-            counters.add(false)
+            this.counters.add(false)
         }
-        hashes = SaltedHash(k)
+        this.hashes = SaltedHash(k)
+    }
+
+    fun clone(): BloomFilter<T> {
+        var copy = BloomFilter<T>(maxSize, k)
+        for (i in 0 until this.counters.size) {
+            copy.counters[i] = this.counters[i]
+        }
+        return copy
     }
 
     fun update(key: T) {
