@@ -37,16 +37,16 @@ class SparseRecovery<T> {
     // n counters
     private val counters = emptyArray<Cell>().toMutableList()
     private val counters_records = emptyArray<Cell>().toMutableList()
-    private var n: Int
+    private val n: Int
     // l hash functions
-    private var hashes: SaltedHash
-    private var l: Int
+    private val hashes: SaltedHash
+    private val l: Int
     // parameters for bloom filters
-    private var maxSize: Int
-    private var k: Int
+    private val maxSize: Int
+    private val k: Int
     // threshold in division
     private val threshold = 0.000001
-    private var hashSeed = 100
+    private val hashSeed: Int
 
     constructor(n: Int, l: Int): this(n,l,n,l)
 
@@ -61,12 +61,26 @@ class SparseRecovery<T> {
             counters.add(Cell(maxSize, k))
             counters_records.add(Cell(maxSize, k))
         }
-        hashes = SaltedHash(l, hashSeed)
+        hashes = SaltedHash(5*l, hashSeed)
     }
 
     fun update(key: Int, weight: Double = 1.0) {
         val set = emptySet<Int>().toMutableSet()
 //        println("Insert " + key)
+        var count = 0
+        var numHash = 0
+        // Ensure that each item gets l positions to update
+        while (count < l && numHash < 5*l) {
+            val index = hashes.getIndex(numHash, key.toString(), n)
+            numHash++
+            if (set.isEmpty() || (!set.contains(index))) {
+                count++
+                set.add(index)
+                counters[index].count += weight
+                counters[index].sum += weight*key
+                counters[index].fingerprint.update(key)
+            }
+        }
         for (i in 0 until l) {
             val index = hashes.getIndex(i, key.toString(), n)
             if (set.isEmpty() || (!set.contains(index))) {

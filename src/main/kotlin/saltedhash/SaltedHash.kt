@@ -7,9 +7,11 @@ import kotlin.random.Random
 class SaltedHash {
     private val md = MessageDigest.getInstance("SHA-256")
     private val salts = mutableListOf<Int>()
+    private val numHash: Int
 
     // Input number of hash functions
     constructor(numHash: Int, seed: Int = 100) {
+        this.numHash = numHash
         val rd = Random(seed)
 
         for (i in 0 until numHash) {
@@ -44,6 +46,8 @@ class SaltedHash {
         else
             error("Max range cannot be negative")
     }
+
+    fun numHash():Int {return numHash}
 
     fun mergeableWith(saltedHash: SaltedHash): Boolean{
         // Check salts

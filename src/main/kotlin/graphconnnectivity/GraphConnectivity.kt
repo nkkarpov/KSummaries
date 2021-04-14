@@ -44,8 +44,9 @@ class GraphConnectivity {
         // Make sure that n1 < n2
         if (n1 > n2) return update(n2, n1)
 
-        samplers[n1].update(n2, 1.0)
-        samplers[n2].update(n1, -1.0)
+        val index = edgeToInt(n1, n2)
+        samplers[n1].update(index, 1.0)
+        samplers[n2].update(index, -1.0)
     }
 
     fun query(): Int {
@@ -55,27 +56,35 @@ class GraphConnectivity {
             flag = false
             for (i in 0 until n) {
                 // check for each a supernode
-                if (i == connectivityArray[i]) {
+                if (i == find(i)) {
 //                    println("Node " + i.toString())
                     // output a edge
-                    val n2 = samplers[i].query()
-                    // if connect to another component
-//                    if (n2!=null) println("  output " + n2.toString())
-                    if (n2 != null && !same_componnet(i, n2)) {
-//                        println("  " + i.toString() + " and " + n2.toString() + " actual " + connectivityArray[n2].toString())
-                        // decrease count of connected component
-                        cc -= 1
-                        // find n2's supernode
-                        val n_super = connectivityArray[n2]
-                        // merge to a supernode
-                        union(i, n_super)
-                        // find the new merged supernode id
-                        val i_super = connectivityArray[i]
-                        // set flag to be ture
-                        flag = true
-//                        println("  merge node " + i.toString() + " and " + n2.toString())
-//                        println("  to node " + i_super.toString())
-                        samplers[i_super].merge(samplers[n_super])
+                    var index = samplers[i].query()
+                    // the sampler returns an edge
+                    if (index != null) {
+                        // peal edge from index
+                        val edgeArray = intToEdge(index)
+                        val n1 = edgeArray[0]
+                        var n2 = edgeArray[1]
+
+                        // make sure i == n1
+                        if (i == n2) {n2 = n1}
+                        if (i == n2) continue
+
+                        if (!same_componnet(i, n2)) {
+                            // decrease count of connected component
+                            cc -= 1
+                            // find n2's supernode
+                            val n_super = find(n2)
+                            // merge to a supernode
+                            union(i, n2)
+                            // set flag to be ture, continue to connect
+                            flag = true
+                            if (i < n_super)
+                                samplers[i].merge(samplers[n_super])
+                            else
+                                samplers[n_super].merge(samplers[i])
+                        }
                     }
                 }
             }
@@ -109,5 +118,14 @@ class GraphConnectivity {
         if (same_componnet(n1, n2)) return
         if (find(n1) < find(n2)) connectivityArray[n2] = find(n1)
         else connectivityArray[n1] = connectivityArray[n2]
+    }
+
+    private fun edgeToInt (n1: Int, n2: Int): Int {
+        return n1*n + n2
+    }
+    private fun intToEdge (index: Int): Array<Int> {
+        val n1 = index / n
+        val n2 = index % n
+        return arrayOf(n1, n2)
     }
 }

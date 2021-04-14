@@ -1,5 +1,7 @@
 import graphconnnectivity.GraphConnectivity
+import l0sampling.L0Sampling
 import org.junit.Test
+import sparserecovery.SparseRecovery
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlin.test.assertFails
@@ -29,6 +31,24 @@ class GraphConnectivityTests {
             b.update(item, item+1)
         }
         assertFails("Invalid merge") { a.merge(b) }
+    }
+
+    fun testRecoveryMerge() {
+        val a = L0Sampling(5, 100, 3)
+        val b = L0Sampling(5, 100, 3)
+        val c = L0Sampling(5, 100, 3)
+
+        for (i in 0 until 10) {
+            a.update(i, 1.0)
+        }
+        b.update(9, -1.0)
+        b.update(1, -1.0)
+        a.merge(b)
+        println(a.query())
+        c.update(2, -1.0)
+        c.update(3, -1.0)
+        a.merge(c)
+        println(a.query())
     }
 
 }

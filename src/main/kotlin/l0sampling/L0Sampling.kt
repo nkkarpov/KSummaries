@@ -16,6 +16,8 @@ class L0Sampling {
     val hash: SaltedHash
     // Store the results if the sampler has been queried
     var tempResults = emptyList<Int>().toMutableList()
+    // if the sampler has been queried
+    var queried = false
 
     // sparse recovery initialize with n and l
     // bloomFilter initialize with maxSize and k
@@ -43,9 +45,11 @@ class L0Sampling {
     }
 
     fun query(): Int? {
-        var res = queryAll()
+        var res = tempResults
+        if (! queried)
+            res = queryAll().toMutableList()
         if (res.isNotEmpty()) {
-            res = res.toMutableList()
+//            println(res)
             res.shuffle()
             return res[0]
         }
@@ -64,7 +68,7 @@ class L0Sampling {
         }
 
         // Change queried flag to true
-//        queried = true
+        queried = true
         // Store current results to tempResults
         for (i in res.indices) {
             tempResults.add(res[i])
@@ -82,5 +86,7 @@ class L0Sampling {
         for (i in 0 until m) {
             recoveries[i].merge(summary.recoveries[i])
         }
+        queried = false
+        tempResults.clear()
     }
 }
