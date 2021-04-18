@@ -1,7 +1,6 @@
 import graphconnnectivity.GraphConnectivity
 import l0sampling.L0Sampling
 import org.junit.Test
-import sparserecovery.SparseRecovery
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlin.test.assertFails
@@ -9,7 +8,7 @@ import kotlin.test.assertFails
 class GraphConnectivityTests {
     @Test
     fun testInit() {
-        val sketch = GraphConnectivity(10,  5, 5, 10, 3, 10, 5)
+        val sketch = GraphConnectivity(10, 5, 10, 3, 10, 5)
         for (i in 0 until 9) {
             sketch.update(i, i+1)
         }
@@ -23,8 +22,8 @@ class GraphConnectivityTests {
 
     @Test
     fun testMergeFail() {
-        val a = GraphConnectivity(100,  5, 5, 10, 3, 10, 5)
-        val b = GraphConnectivity(100,  5, 5, 10, 3, 10, 5, 10)
+        val a = GraphConnectivity(100,  5, 10, 3, 10, 5)
+        val b = GraphConnectivity(100,  5, 10, 3, 10, 5, 10)
         for (i in 0 until 10000) {
             val item = Random.nextInt().rem(99).absoluteValue
             a.update(item, item+1)

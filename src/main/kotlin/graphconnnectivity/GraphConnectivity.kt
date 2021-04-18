@@ -19,10 +19,9 @@ class GraphConnectivity {
     // connectivity array
     private var connectivityArray: Array<Int>
 
-    // n by r samplers
-    // parameters for sampler: levles, size_recovery, num_hash_recovery
+    // parameters for sampler: levels, size_recovery, num_hash_recovery
     // parameters for bloomFilter: maxSize_fingerprint, num_hash_fingerprint
-    constructor(n: Int, r: Int,
+    constructor(n: Int,
                 levels: Int, size_recovery: Int, num_hash_recovery: Int,
                 maxSize_fingerprint: Int, num_hash_fingerprint: Int,
                 hashSeed: Int = 100) {
