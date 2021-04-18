@@ -10,9 +10,8 @@ package graphconnnectivity
 import l0sampling.L0Sampling
 
 class GraphConnectivity {
-    // n: #nodes, m: #edges
+    // n: #nodes
     val n: Int
-    val m: Int
     // l0 samplers to store edge information
     var samplers: Array<L0Sampling>
     // number of connected components
@@ -23,12 +22,11 @@ class GraphConnectivity {
     // n by r samplers
     // parameters for sampler: levles, size_recovery, num_hash_recovery
     // parameters for bloomFilter: maxSize_fingerprint, num_hash_fingerprint
-    constructor(n: Int, m: Int, r: Int,
+    constructor(n: Int, r: Int,
                 levels: Int, size_recovery: Int, num_hash_recovery: Int,
                 maxSize_fingerprint: Int, num_hash_fingerprint: Int,
                 hashSeed: Int = 100) {
         this.n = n
-        this.m = m
         this.cc = n
         connectivityArray = Array(n, {0})
         for (i in 0 until n) {
