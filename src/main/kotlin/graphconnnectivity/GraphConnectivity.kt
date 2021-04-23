@@ -2,7 +2,7 @@
 @author     Yan Song (songyan@iu.edu)
 @license    See LICENSE file
 
-This algorithm returns the connectivity of an input graph.
+This algorithm detects if the a graph is k-connected.
  */
 
 package graphconnnectivity
@@ -32,18 +32,18 @@ class GraphConnectivity {
             connectivityArray[i] = i
         }
         samplers = Array(n) { L0Sampling(levels, size_recovery, num_hash_recovery,
-                               maxSize_fingerprint, num_hash_fingerprint, hashSeed) }
+            maxSize_fingerprint, num_hash_fingerprint, hashSeed) }
     }
 
     // Give id of two nodes
-    fun update(n1: Int, n2: Int) {
+    fun update(n1: Int, n2: Int, weight:Double = 1.0) {
         if (n1 == n2) return
         // Make sure that n1 < n2
         if (n1 > n2) return update(n2, n1)
 
         val index = edgeToInt(n1, n2)
-        samplers[n1].update(index, 1.0)
-        samplers[n2].update(index, -1.0)
+        samplers[n1].update(index, weight)
+        samplers[n2].update(index, -1*weight)
     }
 
     fun query(): Int {
@@ -51,39 +51,12 @@ class GraphConnectivity {
         // while there is still change in connected components
         while (flag) {
             flag = false
+            // check for each a supernode
             for (i in 0 until n) {
-                // check for each a supernode
-                if (i == find(i)) {
-//                    println("Node " + i.toString())
-                    // output a edge
-                    var index = samplers[i].query()
-                    // the sampler returns an edge
-                    if (index != null) {
-                        // peal edge from index
-                        val edgeArray = intToEdge(index)
-                        val n1 = edgeArray[0]
-                        var n2 = edgeArray[1]
+                val decreased = decreaseCC(i)
 
-                        // make sure i == n1
-                        if (i == n2) {n2 = n1}
-                        if (i == n2) continue
-
-                        if (!same_componnet(i, n2)) {
-                            // decrease count of connected component
-                            cc -= 1
-                            // find n2's supernode
-                            val n_super = find(n2)
-                            // merge to a supernode
-                            union(i, n2)
-                            // set flag to be ture, continue to connect
-                            flag = true
-                            if (i < n_super)
-                                samplers[i].merge(samplers[n_super])
-                            else
-                                samplers[n_super].merge(samplers[i])
-                        }
-                    }
-                }
+                // if flag is false, update flag
+                if (!flag) flag = decreased.first
             }
         }
         println(connectivityArray.toList())
@@ -91,11 +64,57 @@ class GraphConnectivity {
     }
 
     fun merge(summary: GraphConnectivity) {
-        assert(n == summary.n) { "Unable to apply merge, the size of rows is not equal $n != ${summary.n}" }
+        assert(n == summary.n) { "Unable to apply merge, the size of graph nodes is not equal $n != ${summary.n}" }
 
         for (i in 0 until n) {
             samplers[i].merge(summary.samplers[i])
         }
+    }
+
+    fun decreaseCC(i: Int): Pair<Boolean, Int?> {
+        if (i == find(i)) {
+            // output a edge
+            var index = samplers[i].query()
+            // the sampler returns an edge
+            if (index != null) {
+                // peal edge from index
+                val edgeArray = intToEdge(index)
+                val n1 = edgeArray[0]
+                var n2 = edgeArray[1]
+
+                // make sure i == n1
+                if (i == n2) {
+                    n2 = n1
+                }
+                // self loop
+                if (i == n2) return Pair(false, index)
+
+                // Connected component decreases
+                if (!same_componnet(i, n2)) {
+                    // decrease count of connected component
+                    cc -= 1
+                    // find n2's supernode
+                    val n_super = find(n2)
+                    // merge to a supernode
+                    union(i, n2)
+                    // set flag to be ture, continue to connect
+                    if (i < n_super) {
+                        samplers[i].merge(samplers[n_super])
+
+                    }
+                    else {
+                        samplers[n_super].merge(samplers[i])
+                    }
+                    return Pair(true, index)
+                }
+                // the edge does not connect components
+                return Pair(false, index)
+            }
+            // sampler returns null
+            return Pair(false, index)
+        }
+        // i is not supernode
+        return Pair(false, null)
     }
 
     // path compression
