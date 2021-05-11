@@ -2,7 +2,7 @@
 @author     Yan Song (songyan@iu.edu)
 @license    See LICENSE file
 
-This algorithm returns the connectivity of an input graph.
+This algorithm returns the k connectivity of an input graph.
  */
 
 package graphkconnnectivity

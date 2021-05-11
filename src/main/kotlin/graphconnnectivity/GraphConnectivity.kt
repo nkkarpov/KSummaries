@@ -39,7 +39,7 @@ class GraphConnectivity {
     fun update(n1: Int, n2: Int, weight:Double = 1.0) {
         if (n1 == n2) return
         // Make sure that n1 < n2
-        if (n1 > n2) return update(n2, n1)
+        if (n1 > n2) return update(n2, n1, weight)
 
         val index = edgeToInt(n1, n2)
         samplers[n1].update(index, weight)
