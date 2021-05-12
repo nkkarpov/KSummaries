@@ -82,6 +82,9 @@ class GraphConnectivity {
                 val n1 = edgeArray[0]
                 var n2 = edgeArray[1]
 
+                // the returned value is not correct
+                if (n1<0 || n1 >=n || n2 < 0 || n2>=n) return Pair(false, index)
+
                 // make sure i == n1
                 if (i == n2) {
                     n2 = n1
@@ -89,10 +92,9 @@ class GraphConnectivity {
                 // self loop
                 if (i == n2) return Pair(false, index)
 
+
                 // Connected component decreases
                 if (!same_componnet(i, n2)) {
-                    // decrease count of connected component
-                    cc -= 1
                     // find n2's supernode
                     val n_super = find(n2)
                     // merge to a supernode
@@ -131,9 +133,13 @@ class GraphConnectivity {
     }
 
     private fun union(n1: Int, n2: Int) {
-        if (same_componnet(n1, n2)) return
-        if (find(n1) < find(n2)) connectivityArray[n2] = find(n1)
-        else connectivityArray[n1] = connectivityArray[n2]
+        if (same_componnet(n1, n2)) {
+            println("same component, no need to union " + n1 +" and "+ n2)
+            return
+        }
+        cc -= 1
+        if (find(n1) < find(n2)) connectivityArray[find(n2)] = find(n1)
+        else connectivityArray[find(n1)] = find(n2)
     }
 
     private fun edgeToInt (n1: Int, n2: Int): Int {

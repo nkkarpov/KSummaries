@@ -40,13 +40,13 @@ class GraphKConnectivity {
     }
 
     // Give id of two nodes
-    fun update(n1: Int, n2: Int) {
+    fun update(n1: Int, n2: Int, weight: Double = 1.0) {
         if (n1 == n2) return
         // Make sure that n1 < n2
-        if (n1 > n2) return update(n2, n1)
+        if (n1 > n2) return update(n2, n1, weight)
 
         for (i in 0 until k) {
-            connectivities[i].update(n1, n2)
+            connectivities[i].update(n1, n2, weight)
         }
     }
 
@@ -75,11 +75,16 @@ class GraphKConnectivity {
                 }
             }
             // Not connected at level i
-            if (connectivities[i].query() != 1) {
+            val cc_current_level = connectivities[i].query()
+            if (cc_current_level != 1) {
+                val level = i+1
+                println("Connected component " + cc_current_level + " at level " + level)
                 return false
             }
         }
-        return connectivities[k-1].query() == 1
+        val cc_final_level = connectivities[k-1].query()
+        println("Connected component " + cc_final_level + " at final level " + k)
+        return cc_final_level == 1
     }
 
     fun merge(summary: GraphKConnectivity) {
