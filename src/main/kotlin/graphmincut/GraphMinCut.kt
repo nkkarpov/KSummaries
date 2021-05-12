@@ -46,7 +46,7 @@ class GraphMinCut {
         for (i in 0 until levels) {
             if (prob < 2.0.pow(levels-1-i).toInt()) {
                 kconnectivities[i].update(n1, n2, weight)
-            } else {break}
+            }
         }
     }
 

@@ -19,7 +19,7 @@ class GraphMinCutTests {
     @Test
     fun testK() {
         val n = 100
-        val levels = 10
+        val levels = 5
         val k = 2
         val connectivity = 10
         val sketch = GraphMinCut(n, levels, k, 5, 200, 5, 100, 5)
