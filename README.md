@@ -46,9 +46,9 @@ A Kotlin library for mergeable summarizing data structures.
   
 - [Graph Bipartiteness](https://people.cs.umass.edu/~mcgregor/papers/13-graphsurvey.pdf)
 
-- Graph k-connectivity
+- [Graph k-connectivity](http://web.stanford.edu/class/cs369g/files/lectures/lec13.pdf)
   
-- Graph Min Cut
+- [Graph Min Cut](http://web.stanford.edu/class/cs369g/files/lectures/lec13.pdf)
 
 ## Implementation Detail
 
