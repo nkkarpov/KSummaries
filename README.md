@@ -12,7 +12,7 @@ A Kotlin library for mergeable summarizing data structures.
 
 - Fingerprints for set equality
 
-- HyperLogLog for set cardinality
+- [HyperLogLog](http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf) for set cardinality
 
 ### Item Frequency Estimation
 
@@ -36,7 +36,7 @@ A Kotlin library for mergeable summarizing data structures.
 
 - Sparse Vector Recovery
 
-- Distinct Sampling / L_0 Sampling
+- [Distinct Sampling / L_0 Sampling](https://webdocs.cs.ualberta.ca/~mreza/courses/Streaming19/lecture11.pdf)
 
 - L_p Sampling
 
