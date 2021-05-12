@@ -59,7 +59,7 @@ class GraphConnectivity {
                 if (!flag) flag = decreased.first
             }
         }
-        println(connectivityArray.toList())
+//        println(connectivityArray.toList())
         return cc
     }
 

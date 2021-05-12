@@ -102,12 +102,12 @@ class GraphKConnectivity {
             cc_current_level = connectivities[i].query()
             if (cc_current_level != 1) {
                 val level = i+1
-                println("Connected component " + cc_current_level + " at level " + level)
+//                println("Connected component " + cc_current_level + " at level " + level)
                 return false
             }
         }
         val cc_final_level = connectivities[k-1].query()
-        println("Connected component " + cc_final_level + " at final level " + k)
+//        println("Connected component " + cc_final_level + " at final level " + k)
         return cc_final_level == 1
     }
 
