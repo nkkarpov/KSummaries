@@ -25,7 +25,7 @@ class GraphKConnectivityTests {
             val set = mutableSetOf<Int>()
             while (set.size < k+2) {
                 val node = Random.nextInt().rem(n).absoluteValue
-                if (node != i) set.add(node)
+                if (node != i && node >= 0 && node < n) set.add(node)
             }
             for (j in set) {
                 sketch.update(i, j)

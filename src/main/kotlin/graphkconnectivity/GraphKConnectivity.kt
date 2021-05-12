@@ -74,8 +74,32 @@ class GraphKConnectivity {
                     }
                 }
             }
+            flag = true
+            while(flag) {
+                flag = false
+                for (j in 0 until n) {
+                    val decreased = connectivities[i].decreaseCC(j)
+
+                    // update flag is flag is false
+                    if (!flag) flag = decreased.first
+
+                    // If the sampled edge indeed decreases cc
+                    if (decreased.first) {
+                        val edgeIndex = decreased.second
+                        if (edgeIndex != null) {
+                            val nodes = intToEdge(edgeIndex)
+                            // Delete that edge from following sketches
+                            for (j in i+1 until k) {
+                                connectivities[j].update(nodes.first, nodes.second, -1.0)
+                            }
+                        }
+                    }
+                }
+            }
             // Not connected at level i
-            val cc_current_level = connectivities[i].query()
+            var cc_current_level = connectivities[i].query()
+            cc_current_level = connectivities[i].query()
+            cc_current_level = connectivities[i].query()
             if (cc_current_level != 1) {
                 val level = i+1
                 println("Connected component " + cc_current_level + " at level " + level)
