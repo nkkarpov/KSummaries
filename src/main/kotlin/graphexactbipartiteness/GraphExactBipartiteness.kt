@@ -3,7 +3,7 @@
 @license    See LICENSE file
 
 This algorithm returns whether an input graph is bipartite.
-Current implementation does not support merge yet.
+This is a streaming algorithm, so the implementation does not support merge.
  */
 
 package graphexactbipartiteness
